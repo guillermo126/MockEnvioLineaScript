@@ -11,7 +11,22 @@
 #include <tiposDato.h>
 #define PUERTO 7100
 #define PACKAGESIZE 1024
-//static const char* DEFINICION_VARIABLES = "variables a";
+static const char* DEFINICION_VARIABLES = "variables a";
+
+void mostrarPCB(pcb* unPCB) {
+ printf("\nIDENTIFICADOR:%d\n", unPCB->identificador);
+ printf("CANTIDAD_DE_INSTRUCCIONES: %d\n", unPCB->cant_instrucciones);
+ printf("CANTIDAD_DE_NIVELES_DE_STACK: %d\n", unPCB->cantidadDeNivelesStack);
+ printf("INDICE_DE_STACK: %d\n", list_size(unPCB->indiceDeStack));
+ printf("PAGINA_DE_CODIGO: %d\n", unPCB->paginaDeCodigo);
+ printf("PAGINA_DE_STACK: %d\n", unPCB->paginaDeStack);
+ printf("PROGRAM_COUNTER:%d\n", unPCB->program_counter);
+ printf("QUANTUM: %d\n", unPCB->quantum);
+ printf("TAMAÑO ETIQUETAS: %d\n", unPCB->tamano_etiquetas);
+}
+
+
+
 
 
 int main(int argc, char *argv[]) {
@@ -19,22 +34,40 @@ int main(int argc, char *argv[]) {
 	int socketParaServidor = crearSocketCliente(PUERTO);
 	printf("hola2\n");
 	mensaje_UMC_CPU mensajeAEnviar;
-	printf("hola3\n");
-//	char* DEFINICION=malloc(strlen(DEFINICION_VARIABLES));
-//	DEFINICION ="variables a";
-	char* DEFINICION_VARIABLES = "variables a";
+	mensaje_CPU_NUCLEO mensajeARecibir;
+
+	pcb unPcb;
 
 
-	mensajeAEnviar.texto=DEFINICION_VARIABLES;
-	mensajeAEnviar.protocolo=INSTRUCCION;
-	mensajeAEnviar.parametro=0;
-	mensajeAEnviar.valor=4;
-	mensajeAEnviar.tamanoMensaje=0;
 
+
+//	malloc(strlen("variables a"))
+
+//	   int len=strlen(DEFINICION_VARIABLES);
+
+//	   strcpy(mensajeAEnviar.texto,DEFINICION);
+
+
+	recibirmensajeCPU_NUCLEO(socketParaServidor, &mensajeARecibir,
+				&unPcb);
+
+	if(mensajeARecibir.protocolo== FINALIZAR){
+		printf("llego finalizar");
+
+	}
+
+	printf("el valor del parametro es:%s\n",mensajeARecibir.parametro);
+
+	printf("el valor del tamanioParametro es:%d\n",mensajeARecibir.tamanioParametro);
+	printf("el valor del valor es:%d\n",mensajeARecibir.valor);
+
+
+	mostrarPCB(&unPcb);
 	printf("hola4\n");
-	enviarMensajeUMC_CPU(socketParaServidor,&mensajeAEnviar);
+
 	printf("hola5\n");
-	printf("la instruccion es: %s\n",mensajeAEnviar.texto);
+
+	sleep(5);
 
 	close(socketParaServidor);
 
